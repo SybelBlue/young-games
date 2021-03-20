@@ -1,34 +1,34 @@
-let grid;
+let t, tc;
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
-    background(240);
+    background(color("#276FBF"));
+    t = new Tableau(30, 30, [3, 2, 1]);
+    tc = new TableauControl(80, 200, [3, 2, 1]);
 }
 
 function draw() {
+    background(color("#276FBF"));
+    t.draw();
+    tc.draw();
     try {
         const focused = Renderer.renderAll().found;
 
-        // if (clickThisFrame) {
-        //     if (this.lastFocused && this.lastFocused != focused) {
-        //         this.lastFocused.loseFocus && this.lastFocused.loseFocus();
-        //     }
-
-        //     this.lastFocused = focused;
-
-        //     if (focused) {
-        //         focused.gainFocus && focused.gainFocus();
-        //     } else {
-        //         SceneManager.tray.loadMachineOptions();
-        //     }
-        // }
+        if (focused) {
+            console.log(focused);
+        }
     } catch (e) {
         console.error(e);
     } finally {
         Renderer.clearStack();
+        Renderer.clickThisFrame = false;
     }
 }
 
 function windowResized() { 
     // resizeCanvas(windowWidth, windowHeight);
+}
+
+function mouseClicked() {
+    Renderer.clickThisFrame = true;
 }
