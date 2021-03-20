@@ -2,14 +2,19 @@ let grid;
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
-    background(240);
 }
 
 function draw() {
+    background(20);
+
+    Renderer.newRenderable(Layers.Debug, function(regions) {
+        fill(regions.box.hovering ? 80 : 200);
+        rect(20, 20, 20, 20);
+    }, Renderer.regionStub("box", 20, 20, 20, 20));
     try {
         const focused = Renderer.renderAll().found;
 
-        // if (clickThisFrame) {
+        // if (Renderer.clickThisFrame) {
         //     if (this.lastFocused && this.lastFocused != focused) {
         //         this.lastFocused.loseFocus && this.lastFocused.loseFocus();
         //     }
