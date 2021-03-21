@@ -58,12 +58,16 @@ class Tableau {
 
 class TableauControl extends Tableau {
     static gridPadded;
+    get primary() {
+        return this.colMode ? this.colLabels : this.rowLabels;
+    }
     constructor(x, y, shape) {
         super(x, y, shape);
         TableauControl.gridPadded = Tableau.gridunit + 15;
         this.rowLabels = this.labels;
         this.colLabels = Tableau.labelTranspose(this.labels);
         this.colMode = true;
+        this.lastClickData = this.makeClickData(null);
 
         this.colRegions = this.colLabels.flatMap((col, i) => col.map(function(v, j) {
             return {
@@ -87,25 +91,66 @@ class TableauControl extends Tableau {
         }));
     }
 
+    makeClickData(clickStr) {
+        if (!exists(clickStr)) {
+            return { cancel: null, acceptable: [], transition: [], state: "neutral", swap: null };
+        }
+        if (clickStr == this.lastClickData.cancel) {
+            return { cancel: null, acceptable: [], transition: [], state: "cancelled", swap: null };
+        }
+        const n = parseInt(clickStr);
+        exists(n, true); // throw if n isn't parsed properly
+        if (this.lastClickData.acceptable.includes(n)) {
+            return { cancel: null, acceptable: [], transition: [], state: "accept", swap: [parseInt(this.lastClickData.cancel), n] };
+        }
+        if (this.lastClickData.transition.includes(n)) {
+            return { cancel: null, acceptable: [], transition: [], state: "transition", swap: [parseInt(this.lastClickData.cancel), n] };
+        }
+        const secondary = this.colMode ? this.rowLabels : this.colLabels;
+        return {
+            cancel: clickStr,
+            acceptable: this.primary.find(l => l.includes(n)),
+            transition: secondary.find(l => l.includes(n)),
+            state: "waiting"
+        };
+    }
+
     draw() {
         Renderer.push(this);
         Renderer.translate(...this.pos);
-        if (this.colMode) {
-            Renderer.newRenderable(Layers.Controls, regions => {
-                stroke(0);
-                for (let i = 0; i < this.colLabels.length; i++) {
-                    const col = this.colLabels[i];
-                    fill(color("#DCD4D0"));
-                    rect(i * TableauControl.gridPadded, 0, Tableau.gridunit, col.length * Tableau.gridunit);
-                    fill("#102542");
-                    textSize(Tableau.textSize);
-                    for (let j = 0; j < col.length; j++) {
-                        const l = "" + col[j];
+        Renderer.newRenderable(Layers.Controls, regions => {
+            stroke(0);
+            for (let i = 0; i < this.primary.length; i++) {
+                const axis = this.primary[i];
+                fill(color("#DCD4D0"));
+                if (this.colMode) {
+                    rect(i * TableauControl.gridPadded, 0, Tableau.gridunit, axis.length * Tableau.gridunit);
+                } else {
+                    rect(0, i * TableauControl.gridPadded, axis.length * Tableau.gridunit, Tableau.gridunit);
+                }
+                fill("#102542");
+                textSize(Tableau.textSize);
+                for (let j = 0; j < axis.length; j++) {
+                    const l = "" + axis[j];
+                    if (this.colMode) {
                         text(l, 2 + i * TableauControl.gridPadded + Tableau.gridunit * 0.1, 2 + j * Tableau.gridunit + Renderer.textHeight(Tableau.textSize) * 0.85);
+                    } else {
+                        text(l, 2 + j * Tableau.gridunit + Tableau.gridunit * 0.1, 2 + i * TableauControl.gridPadded + Renderer.textHeight(Tableau.textSize) * 0.85);
                     }
                 }
-            }, ...this.colRegions.map(r => Renderer.regionStub(r.name, r.x, r.y, r.width, r.height, r.blocking)))
-        }
+            }
+
+            for (const key in regions) {
+                const data = regions[key];
+                if (data.clicked) {
+                    this.lastClickData = this.makeClickData(key);
+                    console.log(this.lastClickData);
+                    if (this.lastClickData.state == "transition") {
+                        this.colMode = !this.colMode;
+                    }
+                }
+            }
+        }, ...this.primary.map(r => Renderer.regionStub(r.name, r.x, r.y, r.width, r.height, r.blocking)));
         Renderer.pop(this);
     }
 }

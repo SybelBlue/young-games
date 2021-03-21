@@ -13,10 +13,6 @@ function draw() {
     tc.draw();
     try {
         const focused = Renderer.renderAll().found;
-
-        if (focused) {
-            console.log(focused);
-        }
     } catch (e) {
         console.error(e);
     } finally {
