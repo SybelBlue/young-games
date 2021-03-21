@@ -105,4 +105,18 @@ class Tableau {
         }
         return out;
     }
+
+    static randomRowSwap(labels) {
+        if (!exists(labels) || !exists(labels.filter)) return null;
+        const nonId = labels.filter(l => l && l.length && l.length > 1);
+        if (!nonId.length) return null;
+        const row = random(nonId);
+        if (!row.length) return null;
+        if (row.length == 2) return row;
+        while (true) {
+            const a = random(row);
+            const b = random(row);
+            if (a != b)return [a, b];
+        }
+    }
 }
