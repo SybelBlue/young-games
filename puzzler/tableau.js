@@ -122,16 +122,31 @@ class TableauControl extends Tableau {
             stroke(0);
             for (let i = 0; i < this.modeLabels.length; i++) {
                 const axis = this.modeLabels[i];
-                fill(color("#DCD4D0"));
+                if (this.lastClickData.acceptable == axis) {
+                    fill(color("#8CB369"));
+                } else if (!this.colMode && this.lastClickData.cancel) {
+                    fill(color("#465C69"))
+                } else {
+                    fill(color("#DCD4D0"));
+                }
+
                 if (this.colMode) {
                     rect(i * TableauControl.gridPadded, 0, Tableau.gridunit, axis.length * Tableau.gridunit);
                 } else {
                     rect(0, i * TableauControl.gridPadded, axis.length * Tableau.gridunit, Tableau.gridunit);
                 }
-                fill("#102542");
                 textSize(Tableau.textSize);
+                noStroke();
                 for (let j = 0; j < axis.length; j++) {
-                    const l = "" + axis[j];
+                    const n = axis[j];
+                    const l = "" + n;
+                    if (this.lastClickData.cancel == l) {
+                        fill("#F03A47");
+                    } else if (this.colMode && this.lastClickData.transition.includes(n)) {
+                        fill("#8CB369")
+                    } else {
+                        fill("#102542");
+                    }
                     if (this.colMode) {
                         text(l, 2 + i * TableauControl.gridPadded + Tableau.gridunit * 0.1, 2 + j * Tableau.gridunit + Renderer.textHeight(Tableau.textSize) * 0.85);
                     } else {
@@ -144,9 +159,12 @@ class TableauControl extends Tableau {
                 const data = regions[key];
                 if (data.clicked) {
                     this.lastClickData = this.makeClickData(key);
-                    console.log(this.lastClickData);
                     if (this.lastClickData.state == "transition") {
-                        this.colMode = !this.colMode;
+                        if (this.colMode) {
+                            this.colMode = false;
+                        } else {
+                            this.lastClickData = this.makeClickData(null);
+                        }
                     }
                 }
             }
