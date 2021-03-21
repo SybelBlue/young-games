@@ -1,29 +1,39 @@
 class SwapArrow {
-    static arrowWidth = 10;
-    static bodyHeight = 3;
-    static arrowFlair = 2;
-    static arrowHeight = SwapArrow.arrowHeight + 2 * SwapArrow.arrowFlair;
+    static arrowFlair = 4;
+    static textSize = 24;
     constructor(x, y, n, m) {
         this.x = x;
         this.y = y;
-        this.n = n;
-        this.m = m;
+        this.n = _min(n, m);
+        this.m = _max(n, m);
+        this.text = "(" + this.n + " " + this.m + ")";
+        this.textWidth = Renderer.textWidth(text, SwapArrow.textSize);
+        this.textHeight = Renderer.textHeight(SwapArrow.textSize);
+        this.bodyWidth = _max(this.textWidth + 4, 8);
+        this.bodyHeight = _max(this.textHeight + 4, 3);
+        this.arrowWidth = this.bodyWidth + 4;
+        this.arrowHeight = SwapArrow.arrowFlair * 2 + this.bodyHeight;
     }
 
     centerOn(x, y) {
-        this.pos = [x - SwapArrow.arrowWidth/2, y - SwapArrow.arrowHeight/2];
+        this.x = x - this.arrowWidth/2;
+        this.y = y - this.arrowHeight/2;
     }
 
     draw() {
-        Renderer.temporary(this, this.x, this.y, () => {
-            fill(color("#F6F4F3"));
+        Renderer.push(this);
+        Renderer.translate(this.x, this.y);
+        Renderer.newRenderable(Layers.Tableau, () => {
+            // fill(color("#F6F4F3"));
             noStroke();
-            rect(0, SwapArrow.arrowFlair, SwapArrow.arrowWidth - 4, SwapArrow.bodyHeight);
-            triangle(SwapArrow.arrowWidth - 4, 0,
-                     SwapArrow.arrowWidth - 4, SwapArrow.arrowHeight,
-                     SwapArrow.arrowWidth,     SwapArrow.arrowHeight / 2);
-            textSize(24);
-            text(`(${this.n} ${this.m})`, 2, Renderer.textHeight(24) * 0.8 + 2);
-        })
+            // rect(0, SwapArrow.arrowFlair, this.bodyWidth, this.bodyHeight);
+            // triangle(this.bodyWidth,  0,
+            //          this.bodyWidth,  this.arrowHeight,
+            //          this.arrowWidth, this.arrowHeight / 2);
+            textSize(SwapArrow.textSize);
+            fill(color("#102542"))
+            text(this.text, 2,this.textHeight * 0.8 + 2);
+        });
+        Renderer.pop(this);
     }
 }

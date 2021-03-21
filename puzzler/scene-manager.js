@@ -25,9 +25,9 @@ class SceneManager {
         for (let i = this.log.length - 1; i > 0; i-=2) {
             const tab = this.log[i - 1];
             const arr = this.log[i];
-            Renderer.translate(-0.8 * this.main.width, 0);
+            Renderer.translate(-0.5 * this.main.width, 0);
             arr.draw();
-            Renderer.translate(-0.8 * this.main.width, 0);
+            Renderer.translate(-1.1 * this.main.width, 0);
             tab.draw();
             if (Renderer.xTranslation < -SceneManager.mainCenterPos[0]) {
                 break;
