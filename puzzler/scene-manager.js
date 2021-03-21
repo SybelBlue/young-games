@@ -34,9 +34,9 @@ class SceneManager {
         let i = 1;
         for (const v of this.moveLog.slice().reverse()) {
             const tab = v.shadow;
-            Renderer.translate(-0.5 * this.main.width, 0);
+            Renderer.translate(-1 * this.main.width, 0);
             v.indicator.draw();
-            Renderer.translate(-1.1 * this.main.width, 0);
+            Renderer.translate(-0.8 * this.main.width, 0);
             tab.draw();
             Renderer.newRenderable(Layers.Tableau, _regions => {
                 textSize(30);
@@ -55,7 +55,7 @@ class SceneManager {
 
     log(swap) {
         const copy = this.main.clone();
-        this.main.swap(swap[0], swap[1]);
+        this.main.swap(swap);
         if (this.main.hasNaturalLabels) {
             this.moveLog = [];
             this.lastColMode = true;
@@ -72,7 +72,7 @@ class SceneManager {
         copy.onClick = () => this.returnToPrevious(copy);
         copy.centerOn(...SceneManager.mainCenterPos);
         
-        const arr = new SwapArrow(0, 0, swap[0], swap[1]);
+        const arr = new SwapArrow(0, 0, swap);
         arr.centerOn(...SceneManager.mainCenterPos);
         this.moveLog.push({ shadow: copy, indicator: arr, colMode: colMode });
     }

@@ -45,17 +45,18 @@ class TableauControl extends Tableau {
         const n = parseInt(clickStr);
         exists(n, true); // throw if n isn't parsed properly
         if (this.lastClickData.acceptable.includes(n)) {
-            return { cancel: null, acceptable: [], transition: [], state: "accepted", swap: [parseInt(this.lastClickData.cancel), n] };
+            return { cancel: null, acceptable: [], transition: [], state: "accepted", swap: new Swap(parseInt(this.lastClickData.cancel), n) };
         }
         if (this.lastClickData.transition.includes(n)) {
-            return { cancel: null, acceptable: [], transition: [], state: "transition", swap: [parseInt(this.lastClickData.cancel), n] };
+            return { cancel: null, acceptable: [], transition: [], state: "transition", swap: new Swap(parseInt(this.lastClickData.cancel), n) };
         }
         const secondary = this.colMode ? this.rowLabels : this.colLabels;
         return {
             cancel: clickStr,
             acceptable: this.modeLabels.find(l => l.includes(n)),
             transition: secondary.find(l => l.includes(n)),
-            state: "waiting"
+            state: "waiting",
+            swap: null,
         };
     }
 
@@ -119,7 +120,7 @@ class TableauControl extends Tableau {
     }
 
     fireSwap() {
-        if (exists(this.onSwap) && this.lastClickData.swap.length == 2) {
+        if (exists(this.onSwap) && exists(this.lastClickData.swap)) {
             this.onSwap(this.lastClickData.swap)
         }
     }

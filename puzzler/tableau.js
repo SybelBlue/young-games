@@ -64,7 +64,9 @@ class Tableau {
         Renderer.pop(this);
     }
 
-    swap(x, y) {
+    swap(s) {
+        const x = s.n;
+        const y = s.m;
         if (x == y) return false;
         if (x > this.ord || x <= 0 || y > this.ord || y <= 0) {
             console.error("Cannot swap xy with ord:", x, y, this.ord);
