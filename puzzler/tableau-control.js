@@ -64,9 +64,9 @@ class TableauControl extends Tableau {
         Renderer.push(this);
         Renderer.translate(...this.pos);
         Renderer.newRenderable(Layers.Controls, regions => {
-            stroke(0);
             for (let i = 0; i < this.modeLabels.length; i++) {
                 const axis = this.modeLabels[i];
+                stroke(0);
                 if (this.lastClickData.acceptable == axis) {
                     fill(color("#8CB369"));
                 } else if (!this.colMode && this.lastClickData.cancel) {
@@ -104,6 +104,7 @@ class TableauControl extends Tableau {
                 const data = regions[key];
                 if (data.clicked) {
                     this.lastClickData = this.makeClickData(key);
+                    console.log(this.lastClickData)
                     if (this.lastClickData.state == "transition") {
                         if (this.colMode) {
                             this.colMode = false;
