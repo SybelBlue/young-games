@@ -1,5 +1,6 @@
 class SceneManager {
     moveLog = [];
+    lastColMode = true;
     static get mainCenterPos() {
         return [windowWidth * 2 / 3, windowHeight / 3];
     }
@@ -52,12 +53,15 @@ class SceneManager {
 
     log(swap) {
         const copy = this.main.clone();
-        const colMode = this.main.colMode;
         this.main.swap(swap[0], swap[1]);
         if (this.main.hasNaturalLabels) {
             this.moveLog = [];
+            this.lastColMode = true;
             return;
         }
+        const colMode = this.lastColMode;
+        this.lastColMode = this.control.colMode;
+
         const prev = this.moveLog.find(v => v.shadow.labels == this.main.labels);
         if (exists(prev)) {
             this.returnToPrevious(prev);
@@ -74,8 +78,10 @@ class SceneManager {
     returnToPrevious(tab) {
         const i = this.moveLog.findIndex(v => v.shadow == tab);
         if (i < 0) return;
+        this.control.colMode = this.moveLog[i].colMode;
         this.moveLog = this.moveLog.slice(0, i);
         this.main = tab;
         this.main.onClick = null;
+        this.lastColMode = !Array.last(this.moveLog) || Array.last(this.moveLog).colMode;
     }
 }
