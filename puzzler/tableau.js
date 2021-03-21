@@ -1,7 +1,7 @@
 class Tableau {
     static textSize = 36;
     static gridunit;
-    shadow = false;
+    get shadow() { return exists(this.onClick); }
 
     get gridunit() {
         return (this.shadow ? 0.75 : 1) * Tableau.gridunit;
@@ -15,7 +15,11 @@ class Tableau {
         return this.shape.length * this.gridunit;
     }
 
-    constructor(x, y, shape) {
+    get hasNaturalLabels() {
+        return this.labels.flatMap(x => x).every((x, i) => x == i + 1);
+    }
+
+    constructor(x, y, shape, onClick) {
         Tableau.gridunit = Renderer.textWidth("0", Tableau.textSize) * 1.5;
         this.pos = [x, y];
         this.shape = shape;
@@ -52,8 +56,8 @@ class Tableau {
                 }
             }
 
-            if (this.shadow && regions.boundingBox.clicked) {
-                console.log("clicked shadow");
+            if (this.shadow && regions.boundingBox.clicked && exists(this.onClick)) {
+                this.onClick();
             }
         }, Renderer.regionStub("boundingBox", 0, 0, this.width, this.height));
         Renderer.pop(this);
