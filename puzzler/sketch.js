@@ -1,16 +1,14 @@
-let t, tc;
+let sm;
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
-    background(color("#276FBF"));
-    t = new Tableau(30, 30, [3, 2, 1]);
-    tc = new TableauControl(80, 200, [3, 2, 1]);
+    
+    sm = new SceneManager([3, 2, 1]);
 }
 
 function draw() {
-    background(color("#276FBF"));
-    t.draw();
-    tc.draw();
+    sm.draw();
+    
     try {
         const focused = Renderer.renderAll().found;
     } catch (e) {

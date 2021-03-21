@@ -4,8 +4,9 @@ class TableauControl extends Tableau {
     get modeLabels() {
         return this.colMode ? this.colLabels : this.rowLabels;
     }
-    constructor(x, y, shape) {
+    constructor(x, y, shape, onSwap) {
         super(x, y, shape);
+        this.onSwap = onSwap;
         TableauControl.gridPadded = Tableau.gridunit + 15;
         this.rowLabels = this.labels;
         this.colLabels = Tableau.labelTranspose(this.labels);
@@ -44,7 +45,7 @@ class TableauControl extends Tableau {
         const n = parseInt(clickStr);
         exists(n, true); // throw if n isn't parsed properly
         if (this.lastClickData.acceptable.includes(n)) {
-            return { cancel: null, acceptable: [], transition: [], state: "accept", swap: [parseInt(this.lastClickData.cancel), n] };
+            return { cancel: null, acceptable: [], transition: [], state: "accepted", swap: [parseInt(this.lastClickData.cancel), n] };
         }
         if (this.lastClickData.transition.includes(n)) {
             return { cancel: null, acceptable: [], transition: [], state: "transition", swap: [parseInt(this.lastClickData.cancel), n] };
@@ -105,13 +106,21 @@ class TableauControl extends Tableau {
                     if (this.lastClickData.state == "transition") {
                         if (this.colMode) {
                             this.colMode = false;
+                            this.fireSwap();
                         } else {
                             this.lastClickData = this.makeClickData(null);
                         }
                     }
+                    if (this.lastClickData.state == "accepted") this.fireSwap();
                 }
             }
         }, ...(this.colMode ? this.colRegions : this.rowRegions).map(r => Renderer.regionStub(r.name, r.x, r.y, r.width, r.height, r.blocking)));
         Renderer.pop(this);
+    }
+
+    fireSwap() {
+        if (exists(this.onSwap) && this.lastClickData.swap.length == 2) {
+            this.onSwap(this.lastClickData.swap)
+        }
     }
 }

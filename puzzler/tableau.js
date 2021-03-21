@@ -2,6 +2,19 @@ class Tableau {
     static textSize = 36;
     static gridunit;
     shadow = false;
+
+    get gridunit() {
+        return (this.shadow ? 0.75 : 1) * Tableau.gridunit;
+    }
+
+    get width() {
+        return this.shape[0] * this.gridunit;
+    }
+
+    get height() {
+        return this.shape.length * this.gridunit;
+    }
+
     constructor(x, y, shape) {
         Tableau.gridunit = Renderer.textWidth("0", Tableau.textSize) * 1.5;
         this.pos = [x, y];
@@ -13,17 +26,16 @@ class Tableau {
     draw() {
         Renderer.push(this);
         Renderer.translate(...this.pos);
-        const gridunit = (this.shadow ? 0.75 : 1) * Tableau.gridunit;
         Renderer.newRenderable(Layers.Tableau, regions => {
             fill(color(this.shadow ? "#CBBFB9" : "#F6F4F3"));
             beginShape();
             vertex(0, 0);
             for (let i = 0; i < this.shape.length; i++) {
                 const len = this.shape[i];
-                vertex(len * gridunit, i       * gridunit);
-                vertex(len * gridunit, (i + 1) * gridunit);
+                vertex(len * this.gridunit, i       * this.gridunit);
+                vertex(len * this.gridunit, (i + 1) * this.gridunit);
             }
-            vertex(0, this.shape.length * gridunit);
+            vertex(0, this.shape.length * this.gridunit);
             endShape(CLOSE);
 
             fill("#102542");
@@ -31,14 +43,14 @@ class Tableau {
             textSize(textsize);
             for (let i = 0; i < this.labels.length; i++) {
                 for (let j = 0; j < this.labels[i].length; j++) {
-                    text("" + this.labels[i][j], 2 + j * gridunit * 1.1, 2 + i * gridunit + Renderer.textHeight(textsize) * 0.85);
+                    text("" + this.labels[i][j], 2 + j * this.gridunit * 1.1, 2 + i * this.gridunit + Renderer.textHeight(textsize) * 0.85);
                 }
             }
 
             if (this.shadow && regions.boundingBox.clicked) {
                 console.log("clicked shadow");
             }
-        }, Renderer.regionStub("boundingBox", 0, 0, this.shape[0] * gridunit, this.shape.length * gridunit));
+        }, Renderer.regionStub("boundingBox", 0, 0, this.width, this.height));
         Renderer.pop(this);
     }
 
@@ -59,6 +71,10 @@ class Tableau {
             }
         }
         return true;
+    }
+
+    centerOn(x, y) {
+        this.pos = [x - this.width/2, y - this.height/2];
     }
 
     clone() {
