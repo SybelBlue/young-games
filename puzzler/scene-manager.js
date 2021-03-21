@@ -22,12 +22,13 @@ class SceneManager {
         this.target.draw();
 
         Renderer.push(this);
-        for (let i = this.log.length - 1; i >= 0; i--) {
-            const e = this.log[i];
-            if (exists(e.draw)) { // tableau
-                Renderer.translate(-1.5 * this.main.width, 0);
-                e.draw();
-            }
+        for (let i = this.log.length - 1; i > 0; i-=2) {
+            const tab = this.log[i - 1];
+            const arr = this.log[i];
+            Renderer.translate(-0.8 * this.main.width, 0);
+            arr.draw();
+            Renderer.translate(-0.8 * this.main.width, 0);
+            tab.draw();
             if (Renderer.xTranslation < -SceneManager.mainCenterPos[0]) {
                 break;
             }
@@ -42,7 +43,9 @@ class SceneManager {
         copy.shadow = true;
         copy.centerOn(...SceneManager.mainCenterPos);
         this.log.push(copy);
-        this.log.push(swap); // replace with arrow object
+        const arr = new SwapArrow(0, 0, swap[0], swap[1]);
+        arr.centerOn(...SceneManager.mainCenterPos);
+        this.log.push(arr);
         this.main.swap(swap[0], swap[1]);
     }
 }
