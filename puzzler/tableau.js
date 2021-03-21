@@ -55,8 +55,8 @@ class Tableau {
     }
 
     clone() {
-        const t = Tableau(this.pos[0], this.pos[1], [...this.shape]);
-        t.labels = [...this.labels];
+        const t = new Tableau(this.pos[0], this.pos[1], [...this.shape]);
+        t.labels = this.labels.map(l => [...l]);
         return t;
     }
 
