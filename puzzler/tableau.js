@@ -1,6 +1,7 @@
 class Tableau {
     static textSize = 36;
     static gridunit;
+    shadow = false;
     constructor(x, y, shape) {
         Tableau.gridunit = Renderer.textWidth("0", Tableau.textSize) * 1.5;
         this.pos = [x, y];
@@ -9,26 +10,28 @@ class Tableau {
         this.labels = Array.reshape(Array.range(this.ord, 1), this.shape);
     }
 
-    draw(shadow=false) { //todo
+    draw() { //todo
         Renderer.push(this);
         Renderer.translate(...this.pos);
         Renderer.newRenderable(Layers.Tableau, _stubs => {
-            fill(color("#F6F4F3"));
+            fill(color(this.shadow ? "#CBBFB9" : "#F6F4F3"));
             beginShape();
             vertex(0, 0);
+            const gridunit = (this.shadow ? 0.75 : 1) * Tableau.gridunit;
             for (let i = 0; i < this.shape.length; i++) {
                 const len = this.shape[i];
-                vertex(len * Tableau.gridunit, i       * Tableau.gridunit);
-                vertex(len * Tableau.gridunit, (i + 1) * Tableau.gridunit);
+                vertex(len * gridunit, i       * gridunit);
+                vertex(len * gridunit, (i + 1) * gridunit);
             }
-            vertex(0, this.shape.length * Tableau.gridunit);
+            vertex(0, this.shape.length * gridunit);
             endShape(CLOSE);
 
             fill("#102542");
-            textSize(Tableau.textSize);
+            const textsize = (this.shadow ? 0.75 : 1) * Tableau.textSize;
+            textSize(textsize);
             for (let i = 0; i < this.labels.length; i++) {
                 for (let j = 0; j < this.labels[i].length; j++) {
-                    text("" + this.labels[i][j], 2 + j * Tableau.gridunit * 1.1, 2 + i * Tableau.gridunit + Renderer.textHeight(Tableau.textSize) * 0.85);
+                    text("" + this.labels[i][j], 2 + j * gridunit * 1.1, 2 + i * gridunit + Renderer.textHeight(textsize) * 0.85);
                 }
             }
         });
