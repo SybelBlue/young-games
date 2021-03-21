@@ -10,7 +10,7 @@ class Tableau {
         this.labels = Array.reshape(Array.range(this.ord, 1), this.shape);
     }
 
-    draw() { //todo
+    draw() {
         Renderer.push(this);
         Renderer.translate(...this.pos);
         const gridunit = (this.shadow ? 0.75 : 1) * Tableau.gridunit;
