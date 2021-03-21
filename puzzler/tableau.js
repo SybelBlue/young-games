@@ -28,6 +28,11 @@ class Tableau {
         Renderer.translate(...this.pos);
         Renderer.newRenderable(Layers.Tableau, regions => {
             fill(color(this.shadow ? "#CBBFB9" : "#F6F4F3"));
+            if (this.shadow && regions.boundingBox.hovering) {
+                stroke(255);
+            } else {
+                noStroke();
+            }
             beginShape();
             vertex(0, 0);
             for (let i = 0; i < this.shape.length; i++) {

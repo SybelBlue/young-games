@@ -86,8 +86,8 @@ class TableauControl extends Tableau {
                     const l = "" + n;
                     if (this.lastClickData.cancel == l) {
                         fill("#F03A47");
-                    } else if (this.colMode && this.lastClickData.transition.includes(n)) {
-                        fill("#8CB369")
+                    } else if ((!this.lastClickData.cancel && regions[l].hovering) || (this.colMode && this.lastClickData.transition.includes(n))) {
+                        fill("#8CB369");
                     } else {
                         fill("#102542");
                     }
