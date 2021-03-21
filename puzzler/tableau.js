@@ -16,7 +16,7 @@ class Tableau {
     }
 
     get hasNaturalLabels() {
-        return this.labels.flatMap(x => x).every((x, i) => x == i + 1);
+        return this.labels.flatMap(id).every((x, i) => x == i + 1);
     }
 
     constructor(x, y, shape, onClick) {
@@ -25,6 +25,7 @@ class Tableau {
         this.shape = shape;
         this.ord = Array.sum(this.shape);
         this.labels = Array.reshape(Array.range(this.ord, 1), this.shape);
+        this.onClick = onClick;
     }
 
     draw() {
