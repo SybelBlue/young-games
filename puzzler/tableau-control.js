@@ -100,6 +100,11 @@ class TableauControl extends Tableau {
                 }
             }
 
+            if (this.lastClickData.cancel) {
+                fill(12)
+                text("(" + this.lastClickData.cancel + "_)", this.shape[0] * TableauControl.gridPadded, Renderer.textHeight(Tableau.textSize));
+            }
+
             for (const key in regions) {
                 const data = regions[key];
                 if (data.clicked) {
@@ -124,5 +129,30 @@ class TableauControl extends Tableau {
         if (exists(this.onSwap) && exists(this.lastClickData.swap)) {
             this.onSwap(this.lastClickData.swap)
         }
+    }
+
+    randomRowSwap() {
+        return TableauControl.randomSwap(this.rowLabels);
+    }
+
+    randomColSwap() {
+        return TableauControl.randomSwap(this.colLabels);
+    }
+
+    static randomSwap(labels) {
+        const nonId = labels.filter(l => l && l.length && l.length > 1);
+        
+        if (!nonId.length) return null;
+        
+        const row = random(nonId.flatMap(r => Array(r.length).fill(r)));
+        
+        if (!row.length) return null;
+        
+        if (row.length == 2) return new Swap(row[0], row[1]);
+        
+        const a = random(row);
+        const b = random(row.filter(x => x !== a));
+        
+        return new Swap(a, b);
     }
 }

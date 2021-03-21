@@ -4,6 +4,10 @@ class Swap {
         this.m = _max(n, m);
     }
 
+    includes(x) {
+        return this.n == x || this.m == x;
+    }
+
     toString() {
         return `(${this.n}${this.m})`
     }
