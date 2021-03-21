@@ -104,7 +104,7 @@ class TableauControl extends Tableau {
                 const data = regions[key];
                 if (data.clicked) {
                     this.lastClickData = this.makeClickData(key);
-                    console.log(this.lastClickData)
+                    // console.log(this.lastClickData);
                     if (this.lastClickData.state == "transition") {
                         if (this.colMode) {
                             this.colMode = false;
