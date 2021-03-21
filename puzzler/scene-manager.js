@@ -2,7 +2,7 @@ class SceneManager {
     moveLog = [];
     lastColMode = true;
     static get mainCenterPos() {
-        return [windowWidth * 2 / 3, windowHeight / 3];
+        return [windowWidth / 2, windowHeight / 3];
     }
 
     constructor(shape) {
@@ -11,7 +11,7 @@ class SceneManager {
         // scramble main
 
         this.target = new Tableau(0, 0, shape);
-        this.target.centerOn(windowWidth - this.target.width / 2 - 4, windowHeight / 3)
+        this.target.centerOn(windowWidth * 3 / 4, windowHeight / 3)
 
         this.control = new TableauControl(0, 0, shape, swap => this.log(swap));
         this.control.centerOn(windowWidth / 2, windowHeight * 2 / 3)
@@ -28,6 +28,8 @@ class SceneManager {
             fill(255);
             noStroke();
             text(this.moveLog.length / 2 + " move" + (this.moveLog.length == 2 ? "" : "s"), 4, 4 + Renderer.textHeight(30) * 0.8);
+            textSize(24);
+            text("Target:", this.target.pos[0] - 4, this.target.pos[1] - 6);
         });
         let i = 1;
         for (const v of this.moveLog.slice().reverse()) {
