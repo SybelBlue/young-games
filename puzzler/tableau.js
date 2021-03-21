@@ -13,11 +13,11 @@ class Tableau {
     draw() { //todo
         Renderer.push(this);
         Renderer.translate(...this.pos);
-        Renderer.newRenderable(Layers.Tableau, _stubs => {
+        const gridunit = (this.shadow ? 0.75 : 1) * Tableau.gridunit;
+        Renderer.newRenderable(Layers.Tableau, regions => {
             fill(color(this.shadow ? "#CBBFB9" : "#F6F4F3"));
             beginShape();
             vertex(0, 0);
-            const gridunit = (this.shadow ? 0.75 : 1) * Tableau.gridunit;
             for (let i = 0; i < this.shape.length; i++) {
                 const len = this.shape[i];
                 vertex(len * gridunit, i       * gridunit);
@@ -34,7 +34,11 @@ class Tableau {
                     text("" + this.labels[i][j], 2 + j * gridunit * 1.1, 2 + i * gridunit + Renderer.textHeight(textsize) * 0.85);
                 }
             }
-        });
+
+            if (this.shadow && regions.boundingBox.clicked) {
+                console.log("clicked shadow");
+            }
+        }, Renderer.regionStub("boundingBox", 0, 0, this.shape[0] * gridunit, this.shape.length * gridunit));
         Renderer.pop(this);
     }
 
