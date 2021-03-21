@@ -5,7 +5,8 @@ class Tableau {
         Tableau.gridunit = Renderer.textWidth("0", Tableau.textSize) * 1.5;
         this.pos = [x, y];
         this.shape = shape;
-        this.labels = Array.reshape(Array.range(Array.sum(this.shape)).map(x => x + 1), this.shape);
+        this.ord = Array.sum(this.shape);
+        this.labels = Array.reshape(Array.range(this.ord, 1), this.shape);
     }
 
     draw(shadow=false) { //todo
@@ -34,9 +35,28 @@ class Tableau {
         Renderer.pop(this);
     }
 
+    swap(x, y) {
+        if (x == y) return false;
+        if (x > this.ord || x <= 0 || y > this.ord || y <= 0) {
+            console.error("Cannot swap xy with ord:", x, y, this.ord);
+            return false;
+        }
+        for (const row of this.labels) {
+            for (let i = 0; i < row.length; i++) {
+                const n = row[i];
+                if (n == x) {
+                    row[i] = y;
+                } else if (n == y) {
+                    row[i] = x;
+                }
+            }
+        }
+        return true;
+    }
+
     clone() {
-        const t = Tableau(this.pos[0], this.pos[1], this.shape); //.copy
-        t.labels = this.labels; //.copy
+        const t = Tableau(this.pos[0], this.pos[1], [...this.shape]);
+        t.labels = [...this.labels];
         return t;
     }
 
