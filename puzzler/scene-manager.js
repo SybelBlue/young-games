@@ -1,5 +1,5 @@
 class SceneManager {
-    log = [];
+    moveLog = [];
     static get mainCenterPos() {
         return [windowWidth * 2 / 3, windowHeight / 3];
     }
@@ -12,7 +12,7 @@ class SceneManager {
         this.target = new Tableau(0, 0, shape);
         this.target.centerOn(windowWidth - this.target.width / 2 - 4, windowHeight / 3)
 
-        this.control = new TableauControl(0, 0, shape, swap => this.logSwap(swap));
+        this.control = new TableauControl(0, 0, shape, swap => this.log(swap));
         this.control.centerOn(windowWidth / 2, windowHeight * 2 / 3)
     }
 
@@ -26,20 +26,20 @@ class SceneManager {
             textSize(30);
             fill(255);
             noStroke();
-            text(this.log.length / 2 + " move" + (this.log.length == 2 ? "" : "s"), 4, 4 + Renderer.textHeight(30) * 0.8);
+            text(this.moveLog.length / 2 + " move" + (this.moveLog.length == 2 ? "" : "s"), 4, 4 + Renderer.textHeight(30) * 0.8);
         });
-        for (let i = this.log.length - 1; i > 0; i-=2) {
-            const tab = this.log[i - 1];
-            const arr = this.log[i];
+        let i = 1;
+        for (const v of this.moveLog.slice().reverse()) {
+            const tab = v.shadow;
             Renderer.translate(-0.5 * this.main.width, 0);
-            arr.draw();
+            v.indicator.draw();
             Renderer.translate(-1.1 * this.main.width, 0);
             tab.draw();
             Renderer.newRenderable(Layers.Tableau, _regions => {
                 textSize(30);
                 fill(255);
                 noStroke();
-                text("" + ((i + 1) / 2), tab.pos[0] - 4, tab.pos[1] - 4);
+                text("" + i++, tab.pos[0] - 4, tab.pos[1] - 4);
             });
             if (Renderer.xTranslation < -SceneManager.mainCenterPos[0]) {
                 break;
@@ -50,30 +50,31 @@ class SceneManager {
         this.control.draw();
     }
 
-    logSwap(swap) {
+    log(swap) {
         const copy = this.main.clone();
+        const colMode = this.main.colMode;
         this.main.swap(swap[0], swap[1]);
         if (this.main.hasNaturalLabels) {
-            this.log = [];
+            this.moveLog = [];
             return;
         }
-        const prev = this.log.find(tbOrArr => tbOrArr.labels == this.main.labels);
+        const prev = this.moveLog.find(v => v.shadow.labels == this.main.labels);
         if (exists(prev)) {
             this.returnToPrevious(prev);
             return;
         }
         copy.onClick = () => this.returnToPrevious(copy);
         copy.centerOn(...SceneManager.mainCenterPos);
-        this.log.push(copy);
+        
         const arr = new SwapArrow(0, 0, swap[0], swap[1]);
         arr.centerOn(...SceneManager.mainCenterPos);
-        this.log.push(arr);
+        this.moveLog.push({ shadow: copy, indicator: arr, colMode: colMode });
     }
 
     returnToPrevious(tab) {
-        const i = this.log.indexOf(tab);
+        const i = this.moveLog.findIndex(v => v.shadow == tab);
         if (i < 0) return;
-        this.log = this.log.slice(0, i);
+        this.moveLog = this.moveLog.slice(0, i);
         this.main = tab;
         this.main.onClick = null;
     }
