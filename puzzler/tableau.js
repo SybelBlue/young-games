@@ -58,7 +58,7 @@ class Tableau {
 
 class TableauControl extends Tableau {
     static gridPadded;
-    get primary() {
+    get modeLabels() {
         return this.colMode ? this.colLabels : this.rowLabels;
     }
     constructor(x, y, shape) {
@@ -109,7 +109,7 @@ class TableauControl extends Tableau {
         const secondary = this.colMode ? this.rowLabels : this.colLabels;
         return {
             cancel: clickStr,
-            acceptable: this.primary.find(l => l.includes(n)),
+            acceptable: this.modeLabels.find(l => l.includes(n)),
             transition: secondary.find(l => l.includes(n)),
             state: "waiting"
         };
@@ -120,8 +120,8 @@ class TableauControl extends Tableau {
         Renderer.translate(...this.pos);
         Renderer.newRenderable(Layers.Controls, regions => {
             stroke(0);
-            for (let i = 0; i < this.primary.length; i++) {
-                const axis = this.primary[i];
+            for (let i = 0; i < this.modeLabels.length; i++) {
+                const axis = this.modeLabels[i];
                 fill(color("#DCD4D0"));
                 if (this.colMode) {
                     rect(i * TableauControl.gridPadded, 0, Tableau.gridunit, axis.length * Tableau.gridunit);
@@ -150,7 +150,7 @@ class TableauControl extends Tableau {
                     }
                 }
             }
-        }, ...this.primary.map(r => Renderer.regionStub(r.name, r.x, r.y, r.width, r.height, r.blocking)));
+        }, ...(this.colMode ? this.colRegions : this.rowRegions).map(r => Renderer.regionStub(r.name, r.x, r.y, r.width, r.height, r.blocking)));
         Renderer.pop(this);
     }
 }
