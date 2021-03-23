@@ -19,23 +19,26 @@ class SceneManager {
         this.main.swap(this.control.randomRowSwap());
         this.main.swap(this.control.randomColSwap());
         this.main.swap(this.control.randomColSwap());
+        this.main.swap(this.control.randomColSwap());
 
         this.start = this.main.clone();
     }
 
     draw() {
         background(color("#276FBF"));
-        this.main.draw();
-        this.target.draw();
-
         Renderer.push(this);
+        if (!this.won) this.target.draw();
+        Renderer.translate(this.won ? windowWidth / 4 : 0, 0);
+        this.main.draw()
         Renderer.newRenderable(Layers.Background, () => {
             textSize(30);
             fill(255);
             noStroke();
             text(this.moveLog.length + " move" + (this.moveLog.length == 1 ? "" : "s"), 4, 4 + Renderer.textHeight(30) * 0.8);
-            textSize(24);
-            text("Target:", this.target.pos[0] - 4, this.target.pos[1] - 6);
+            if (!this.won) {
+                textSize(24);
+                text("Target:", this.target.pos[0] - 4, this.target.pos[1] - 6);
+            }
         });
         let i = 0;
         for (const v of this.moveLog.slice().reverse()) {
