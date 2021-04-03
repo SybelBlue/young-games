@@ -79,12 +79,13 @@ class Swap {
             if (checked[i]) continue;
 
             const start = i + 1;
-            let simpleCycle = [start];
             
             let next = maps[start - 1];
             checked[next - 1] = true;
             
             if (next == start) continue; // reject identity
+            
+            let simpleCycle = [start];
             out.push(simpleCycle);
 
             while (next != start) {
