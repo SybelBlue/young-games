@@ -75,11 +75,8 @@ class Swap {
 
         let checked = new Array(ord).fill(false);
         let out = [];
-        let i = 0;
-        while (true) {
-            i = checked.indexOf(false, i);
-
-            if (i < 0) return out.length ? out : [[1]];
+        for (let i = 0; i < checked.length; i++) {
+            if (checked[i]) continue;
 
             const start = i + 1;
             let simpleCycle = [start];
@@ -87,7 +84,8 @@ class Swap {
             let next = maps[start - 1];
             checked[next - 1] = true;
             
-            if (next == start) continue;
+            if (next == start) continue; // reject identity
+            out.push(simpleCycle);
 
             while (next != start) {
                 simpleCycle.push(next);
@@ -95,5 +93,7 @@ class Swap {
                 checked[next - 1] = true;
             }
         }
+
+        return out.length > 0 ? out : [[1]];
     }
 }

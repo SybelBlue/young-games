@@ -17,6 +17,9 @@ class SceneManager {
 
         this.main.swap(this.control.randomRowSwap());
         this.main.swap(this.control.randomRowSwap());
+        this.main.swap(this.control.randomRowSwap());
+        this.main.swap(this.control.randomRowSwap());
+        this.main.swap(this.control.randomColSwap());
         this.main.swap(this.control.randomColSwap());
         this.main.swap(this.control.randomColSwap());
         this.main.swap(this.control.randomColSwap());
@@ -25,7 +28,7 @@ class SceneManager {
     }
 
     draw() {
-        background(color("#276FBF"));
+        Renderer.temporary(this, 0, 0, () => background(color("#276FBF")));
         Renderer.push(this);
         if (!this.won) this.target.draw();
         Renderer.translate(this.won ? windowWidth / 4 : 0, 0);
