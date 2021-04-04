@@ -17,8 +17,8 @@ class SceneManager {
 
         this.main.swap(this.control.randomRowSwap());
         this.main.swap(this.control.randomRowSwap());
-        this.main.swap(this.control.randomRowSwap());
-        this.main.swap(this.control.randomColSwap());
+        // this.main.swap(this.control.randomRowSwap());
+        // this.main.swap(this.control.randomColSwap());
         this.main.swap(this.control.randomColSwap());
 
         this.start = this.main.clone();
@@ -61,8 +61,20 @@ class SceneManager {
 
         if (this.won) {
             Renderer.push(this);
-            Renderer.translate(...this.control.pos)
-            Renderer.newUIButton("Play Again!", color(244, 20, 20), () => location.reload());
+            Renderer.translate(...this.control.pos);
+            const button = Renderer.newUIButton("Play Again!", color(244, 20, 20), () => location.reload());
+            
+            Renderer.translate(button.width / 3, button.height + 20);
+            const perms = this.getPermPair();
+            const t0 = "Rho: " + Swap.permToString(perms.rho);
+            const t1 = "Gamma: " + Swap.permToString(perms.gamma);
+            const t2 = "Sign: " + (Swap.permSign(perms.rho) ? "-" : "+") + "1";
+            Renderer.newRenderable(Layers.UI, _regions => {
+                textSize(20);
+                text(t0, -Renderer.textWidth("Rho", 20), 0);
+                text(t1, -Renderer.textWidth("Gamma", 20), 30);
+                text(t2, -Renderer.textWidth("Sign", 20), 60);
+            });
             Renderer.pop(this);
         } else {
             this.control.draw();
@@ -111,10 +123,9 @@ class SceneManager {
 
     getPermPair() {
         const i = this.moveLog.findIndex(m => !m.colMode) - 1;
-        const rowSwaps = this.moveLog.slice(0, i).map(m => m.indicator.swap).reverse();
-        const colSwaps = this.moveLog.slice(i).map(m => m.indicator.swap).reverse();
+        const colSwaps = this.moveLog.slice(0, i).map(m => m.indicator.swap);
+        const rowSwaps = this.moveLog.slice(i).map(m => m.indicator.swap);
 
-        console.log(rowSwaps, colSwaps);
-        return { rho: Swap.composeSwaps(rowSwaps), sigma: Swap.composeSwaps(colSwaps) };
+        return { rho: Swap.composeSwaps(rowSwaps), gamma: Swap.composeSwaps(colSwaps) };
     }
 }

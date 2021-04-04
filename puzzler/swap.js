@@ -74,6 +74,11 @@ class Swap {
         return Swap.composeSwaps([...Swap.intoSwaps(a), ...Swap.intoSwaps(b)]);
     }
 
+    // true when negative one, false when positive one
+    static permSign(p) {
+        return Swap.intoSwaps(p).length % 2 != 0;
+    }
+
     static permToString(p) {
         if (p[0] && !p[0].length) { // handle simple perms
             p = [p];
