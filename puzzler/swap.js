@@ -74,6 +74,14 @@ class Swap {
         return Swap.composeSwaps([...Swap.intoSwaps(a), ...Swap.intoSwaps(b)]);
     }
 
+    static permToString(p) {
+        if (p[0] && !p[0].length) { // handle simple perms
+            p = [p];
+        }
+        const s = p.map(s => !s.length || s.length < 2 ? "" : "(" + s.map(n => n.toString()).join("") + ")").join("");
+        return s.length ? s : "(1)";
+    }
+
     static composeSwaps(swaps) {
         if (!exists(swaps) || swaps.length == 0) return Swap.identity;
         const ord = max(swaps.map(s => s.m));
