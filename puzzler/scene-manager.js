@@ -18,9 +18,6 @@ class SceneManager {
         this.main.swap(this.control.randomRowSwap());
         this.main.swap(this.control.randomRowSwap());
         this.main.swap(this.control.randomRowSwap());
-        this.main.swap(this.control.randomRowSwap());
-        this.main.swap(this.control.randomColSwap());
-        this.main.swap(this.control.randomColSwap());
         this.main.swap(this.control.randomColSwap());
         this.main.swap(this.control.randomColSwap());
 
@@ -110,5 +107,14 @@ class SceneManager {
         this.main = tab;
         this.main.onClick = null;
         this.lastColMode = !Array.last(this.moveLog) || Array.last(this.moveLog).colMode;
+    }
+
+    getPermPair() {
+        const i = this.moveLog.findIndex(m => !m.colMode) - 1;
+        const rowSwaps = this.moveLog.slice(0, i).map(m => m.indicator.swap).reverse();
+        const colSwaps = this.moveLog.slice(i).map(m => m.indicator.swap).reverse();
+
+        console.log(rowSwaps, colSwaps);
+        return { rho: Swap.composeSwaps(rowSwaps), sigma: Swap.composeSwaps(colSwaps) };
     }
 }

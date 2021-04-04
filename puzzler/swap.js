@@ -1,4 +1,6 @@
 class Swap {
+    static get identity() { return [[1]]; }
+
     constructor(n, m) {
         this.n = _min(n, m);
         this.m = _max(n, m);
@@ -69,7 +71,11 @@ class Swap {
     }
     
     static composePerms(a, b) {
-        const swaps = [...Swap.intoSwaps(a), ...Swap.intoSwaps(b)];
+        return Swap.composeSwaps([...Swap.intoSwaps(a), ...Swap.intoSwaps(b)]);
+    }
+
+    static composeSwaps(swaps) {
+        if (!exists(swaps) || swaps.length == 0) return Swap.identity;
         const ord = max(swaps.map(s => s.m));
         const maps = Array.range(ord, 1).map(x => Swap.applyAll(swaps, x));
 
@@ -95,6 +101,6 @@ class Swap {
             }
         }
 
-        return out.length > 0 ? out : [[1]];
+        return out.length > 0 ? out : Swap.identity;
     }
 }
