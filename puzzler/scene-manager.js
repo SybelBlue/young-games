@@ -15,11 +15,22 @@ class SceneManager {
         this.control = new TableauControl(0, 0, shape, swap => this.log(swap));
         this.control.centerOn(windowWidth / 2, windowHeight * 2 / 3);
 
-        this.main.swap(this.control.randomRowSwap());
-        this.main.swap(this.control.randomRowSwap());
-        // this.main.swap(this.control.randomRowSwap());
-        // this.main.swap(this.control.randomColSwap());
-        this.main.swap(this.control.randomColSwap());
+        let rowSwaps = [
+            this.control.randomRowSwap(),
+            this.control.randomRowSwap(),
+            this.control.randomRowSwap()
+        ];
+        let colSwaps = [
+            this.control.randomColSwap(),
+            this.control.randomColSwap(),
+            this.control.randomColSwap()
+        ]
+
+        rowSwaps.forEach(swap => this.main.swap(swap));
+        colSwaps.forEach(swap => this.main.swap(swap));
+        
+        this.rho = Swap.composeSwaps(rowSwaps);
+        this.gamma = Swap.composeSwaps(colSwaps);
 
         this.start = this.main.clone();
     }
@@ -65,10 +76,9 @@ class SceneManager {
             const button = Renderer.newUIButton("Play Again!", color(244, 20, 20), () => location.reload());
             
             Renderer.translate(button.width / 3, button.height + 20);
-            const perms = this.getPermPair();
-            const t0 = "Rho: " + Swap.permToString(perms.rho);
-            const t1 = "Gamma: " + Swap.permToString(perms.gamma);
-            const t2 = "Sign: " + (Swap.permSign(perms.rho) ? "-" : "+") + "1";
+            const t0 = "Rho: " + Swap.permToString(this.rho);
+            const t1 = "Gamma: " + Swap.permToString(this.gamma);
+            const t2 = "Sign: " + (Swap.permSign(this.rho) ? "-" : "+") + "1";
             Renderer.newRenderable(Layers.UI, _regions => {
                 textSize(20);
                 text(t0, -Renderer.textWidth("Rho", 20), 0);
@@ -119,13 +129,5 @@ class SceneManager {
         this.main = tab;
         this.main.onClick = null;
         this.lastColMode = !Array.last(this.moveLog) || Array.last(this.moveLog).colMode;
-    }
-
-    getPermPair() {
-        const i = this.moveLog.findIndex(m => !m.colMode) - 1;
-        const colSwaps = this.moveLog.slice(0, i).map(m => m.indicator.swap);
-        const rowSwaps = this.moveLog.slice(i).map(m => m.indicator.swap);
-
-        return { rho: Swap.composeSwaps(rowSwaps), gamma: Swap.composeSwaps(colSwaps) };
     }
 }
