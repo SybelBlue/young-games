@@ -49,6 +49,8 @@ class SceneManager {
             if (!this.won) {
                 textSize(24);
                 text("Target:", this.target.pos[0] - 4, this.target.pos[1] - 6);
+                text("Current:", this.main.pos[0] - 4, this.main.pos[1] - 6);
+                text("Controls:", this.control.pos[0] - 4, this.control.pos[1] - 6);
             }
         });
         let i = 0;
